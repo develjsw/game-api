@@ -3,7 +3,6 @@ import { RewardController } from './controller/reward.controller';
 import { RewardService } from './service/reward.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Reward, RewardSchema } from './schema/reward.schema';
-import { RewardHistory, RewardHistorySchema } from './schema/reward-history.schema';
 import { REWARD_REPOSITORY_INTERFACE } from './interface/reward-repository.interface';
 import { RewardRepository } from './repository/reward.repository';
 import { EventModule } from '../event/event.module';
@@ -19,8 +18,7 @@ import { LoginDaysStrategy } from './policy/strategy/login-days.strategy';
     imports: [
         MongooseModule.forFeature([
             { name: Reward.name, schema: RewardSchema },
-            { name: RewardRequest.name, schema: RewardRequestSchema },
-            { name: RewardHistory.name, schema: RewardHistorySchema }
+            { name: RewardRequest.name, schema: RewardRequestSchema }
         ]),
         EventModule // EVENT_REPOSITORY_INTERFACE 사용을 위해 Import, 이벤트와 보상은 상/하위 개념과 비슷하여 순환참조 발생 가능성 ↓
     ],
