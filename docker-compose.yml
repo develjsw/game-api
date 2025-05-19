@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  mongo-auth:
+    image: mongo:6.0
+    container_name: mongo-auth
+    ports:
+      - "27020:27017"
+    volumes:
+      - mongo-auth-data:/data/db
+      - ./mongo-auth-init.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: auth_user
+      MONGO_INITDB_ROOT_PASSWORD: auth_user_password
+
+  mongo-event:
+    image: mongo:6.0
+    container_name: mongo-event
+    ports:
+      - "27021:27017"
+    volumes:
+      - mongo-event-data:/data/db
+      - ./mongo-event-init.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: event_user
+      MONGO_INITDB_ROOT_PASSWORD: event_user_password
+
+  redis:
+    image: redis:7.0
+    container_name: redis
+    ports:
+      - "6380:6379"
+
+  auth-api:
+    build:
+      context: ./auth-api
+      dockerfile: ../docker/Dockerfile-auth
+    container_name: auth-api
+    ports:
+      - "3010:3010"
+    environment:
+      SERVER_PORT: 3010
+      MONGO_DB_URI: mongodb://auth_user:auth_user_password@mongo-auth:27017/auth?authSource=auth
+      JWT_SECRET: DMLALRKDJQTDLWKRTJDGKSMSKEY
+      REDIS_URI: redis://redis:6379
+      ADMIN_ROLE_CODE_HASH: "$2b$10$nWbkGJX3wi1iiALApR8ST.mp2V71Bd2sktg.pZU9PYmqYpJHJunhq"
+      OPERATOR_ROLE_CODE_HASH: "$2b$10$Q2AWj5uTNS0sYmvl.PBsZeffJft1L0zlrxJ6dqDDQv58DF/v5H8bW"
+      AUDITOR_ROLE_CODE_HASH: "$2b$10$E9g3/3JYUyPTGnsz2LIqJ.5wRdEIEtG19/sNLtHb3dGkkpwH6Bi8C"
+
+  event-api:
+    build:
+      context: ./event-api
+      dockerfile: ../docker/Dockerfile-event
+    container_name: event-api
+    ports:
+      - "3011:3011"
+    environment:
+      SERVER_PORT: 3011
+      MONGO_DB_URI: mongodb://event_user:event_user_password@mongo-event:27017/event?authSource=event
+
+  gateway-api:
+    build:
+      context: ./gateway-api
+      dockerfile: ../docker/Dockerfile-gateway
+    container_name: gateway-api
+    ports:
+      - "3012:3012"
+    depends_on:
+      - auth-api
+      - event-api
+    environment:
+      SERVER_PORT: 3012
+      JWT_SECRET: DMLALRKDJQTDLWKRTJDGKSMSKEY
+      AUTH_SERVER_API_URL: http://auth-api:3010
+      EVENT_SERVER_API_URL: http://event-api:3011
+
+volumes:
+  mongo-auth-data:
+  mongo-event-data:
