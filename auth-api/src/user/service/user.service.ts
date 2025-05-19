@@ -45,12 +45,9 @@ export class UserService {
             throw new BadRequestException(`이미 ${role} 권한입니다.`);
         }
 
-        // 역할별 해싱 처리해둔 Key 값 추출
-        const hashCode: string = this.changeUserRolePolicy.getHashedCodeByRole(role);
+        const savedCode: string = this.changeUserRolePolicy.getCodeByRole(role);
 
-        // 평문 Key 값과 해싱 처리해둔 Key 값 비교
-        const isMatch: boolean = await bcrypt.compare(code, hashCode);
-        if (!isMatch) {
+        if (savedCode !== code) {
             throw new ForbiddenException('잘못된 코드이거나 역할을 변경할 수 없습니다.');
         }
 
