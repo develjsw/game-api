@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ResponseFormatInterceptor } from './common/interceptor/response-format.interceptor';
-import * as cookieParser from 'cookie-parser';
 import { ShutdownHandler } from './common/lifecycle/shutdown.handler';
 
 async function bootstrap(): Promise<void> {
@@ -16,8 +15,6 @@ async function bootstrap(): Promise<void> {
             forbidNonWhitelisted: true
         })
     );
-
-    app.use(cookieParser());
 
     app.enableShutdownHooks();
 

@@ -17,7 +17,6 @@ export class CreateEventDto {
     @Type(() => Number)
     conditionValue: number;
 
-    // TODO : 날짜 타입 유효성 검증과 타입 변환 재확인 필요
     @IsNotEmpty()
     @Transform(({ value }: { value: string }) => dayjs(value, 'YYYY-MM-DD HH:mm:ss').toDate())
     @IsDate()
