@@ -16,7 +16,6 @@ export class JwtClientService {
         basePayload: Pick<JwtPayload, 'sub' | 'role'>,
         expireTime?: [AccessTokenExpireType?, RefreshTokenExpireType?]
     ): Promise<JwtTokenType> {
-        console.log(basePayload);
         const { sub, role } = basePayload;
         const [accessExpire, refreshExpire] = expireTime ?? [];
 

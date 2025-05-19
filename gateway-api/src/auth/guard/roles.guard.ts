@@ -15,8 +15,6 @@ export class RolesGuard implements CanActivate {
             context.getClass()
         ]);
 
-        console.log(requiredRoles);
-
         // roles 정보 없는 경우 pass
         if (!requiredRoles) {
             return true;
@@ -31,7 +29,6 @@ export class RolesGuard implements CanActivate {
         if (!user.role) {
             throw new ForbiddenException('역할 정보가 없습니다.');
         }
-        console.log(user);
 
         // 역할 비교 검증
         return requiredRoles.includes(user.role);

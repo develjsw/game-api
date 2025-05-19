@@ -15,12 +15,7 @@ export class ProxyService {
     ) {}
 
     async forward(@Req() req: Request, @Res() res: Response): Promise<void> {
-        const { method, originalUrl, body, headers, query } = req;
-
-        console.log('=========================');
-        console.log(req.user);
-        console.log(this.setProxyHeaders(headers));
-        console.log('=========================');
+        const { method, body, headers, query } = req;
 
         const baseUrl: string = this.getBaseUrl(req.path);
         const url = `${baseUrl}${req.path}`;
@@ -113,14 +108,14 @@ export class ProxyService {
                 configKey = 'AUTH_SERVER_API_URL';
                 break;
             default:
-                throw new HttpException(`Unknown service prefix: ${servicePrefix}`, HttpStatus.NOT_FOUND);
+                throw new HttpException(`${servicePrefix}는 유효하지 않은 서비스 접두사입니다.`, HttpStatus.NOT_FOUND);
         }
 
         const baseUrl: string | undefined = this.configService.get<string>(configKey);
 
         if (!baseUrl) {
             throw new HttpException(
-                `Missing Configuration: ${configKey} Is Not Set In Environment Variables`,
+                `설정 누락 : 환경 변수에 ${configKey} 값이 설정되어 있지 않습니다.`,
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }

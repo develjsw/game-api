@@ -27,8 +27,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
         if (payload.type !== JwtTokenEnum.REFRESH) {
             throw new UnauthorizedException('Refresh Token만 허용됩니다.');
         }
-        console.log('jwt-refresh');
-        console.log(payload);
+
         return payload;
     }
 }

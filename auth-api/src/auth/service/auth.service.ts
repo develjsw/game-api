@@ -25,13 +25,11 @@ export class AuthService {
         const findUserResult: UserDocument | null = await this.userRepository.findUserWithPasswordByConditions({
             email
         });
-        console.log(findUserResult);
         if (!findUserResult) {
             throw new UnauthorizedException('이메일 또는 비밀번호가 올바르지 않습니다.');
         }
 
         const isPasswordMatch: boolean = await bcrypt.compare(password, findUserResult.password);
-        console.log(isPasswordMatch);
         if (!isPasswordMatch) {
             throw new UnauthorizedException('이메일 또는 비밀번호가 올바르지 않습니다.');
         }

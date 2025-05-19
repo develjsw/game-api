@@ -53,7 +53,4 @@ export class RewardController {
     ): Promise<ResponsePagingType<RewardRequestDocument>> {
         return await this.rewardRequestService.getAllRewardRequestListWithPagingByConditions(dto);
     }
-
-    // TODO : OPERATOR, ADMIN만 가능 (gateway api에서 막기)
-    // 상태 변경 (보상 상태 처리(PENDING → COMPLETED 등))
 }

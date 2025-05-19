@@ -26,8 +26,7 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'jwt-access') 
         if (payload.type !== JwtTokenEnum.ACCESS) {
             throw new UnauthorizedException('Access Token만 허용됩니다.');
         }
-        console.log('jwt-access');
-        console.log(payload);
+
         return payload;
     }
 }
