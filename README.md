@@ -47,7 +47,7 @@
 - 파일명 및 폴더명은 기능, 계층 기준으로 명확하게 구분하고 일관된 규칙으로 구성
 EX) controller/, service/, dto/, schema/, policy/, interface/, enum/
 
-## 🧪 실행 방법
+## 🧪 실행 방법 (**모든 API 시작은 Gateway API에서 호출해주세요**)
 ~~~
 # root 디렉토리에서 실행
 $ docker-compose up -d --build
