@@ -61,3 +61,22 @@ $ docker-compose up -d --build
 | `event-api`   | 3011                        | `POST /events`, `GET /events`, `POST /rewards`, `POST /rewards/user-requests`          |
 | `MongoDB`     | 27020 (auth), 27021 (event) | 서비스별 독립 MongoDB 인스턴스 (`auth-api`, `event-api`에서 내부 사용)       |
 | `Redis`       | 6380                        | Refresh Token 저장소 (내부 서비스 간 인증용으로 사용됨)                              |
+
+🛡️ 권한(Role) 승격용 인증 코드 안내
+- 역할 변경(PATCH /auth/users/role) 요청 시, 각 역할에 해당하는 비밀 코드(code)가 필요합니다.
+  
+- | 역할 (`role`) | 인증 코드 (`code`)                         |
+  |----------------|---------------------------------------------|
+  | `ADMIN`        | `Ad2025min05!@Secret!Key123~!`             |
+  | `OPERATOR`     | `Op2025rator05!@Secret!Key456~!`           |
+  | `AUDITOR`      | `Au2025dit05!@Secret!Key789~!`             |
+
+- 예시 요청
+  ~~~
+  PATCH /auth/users/role
+  
+  {
+    "role": "ADMIN",
+    "code": "Ad2025min05!@Secret!Key123~!"
+  }
+  ~~~
