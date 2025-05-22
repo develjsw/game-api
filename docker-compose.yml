@@ -12,6 +12,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: auth_user
       MONGO_INITDB_ROOT_PASSWORD: auth_user_password
+    networks:
+      - internal
 
   mongo-event:
     image: mongo:6.0
@@ -24,20 +26,23 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: event_user
       MONGO_INITDB_ROOT_PASSWORD: event_user_password
+    networks:
+      - internal
 
   redis:
     image: redis:7.0
     container_name: redis
     ports:
       - "6380:6379"
+    networks:
+      - internal
 
   auth-api:
     build:
       context: ./auth-api
       dockerfile: ../docker/Dockerfile-auth
     container_name: auth-api
-    ports:
-      - "3010:3010"
+    # ports 제거 (외부 노출 차단)
     environment:
       SERVER_PORT: 3010
       MONGO_DB_URI: mongodb://auth_user:auth_user_password@mongo-auth:27017/auth?authSource=auth
@@ -46,17 +51,22 @@ services:
       ADMIN_ROLE_CODE: Ad2025min05!@Secret!Key123~!
       OPERATOR_ROLE_CODE: Op2025rator05!@Secret!Key456~!
       AUDITOR_ROLE_CODE: Au2025dit05!@Secret!Key789~!
+    networks:
+      - internal
+      - gateway-link
 
   event-api:
     build:
       context: ./event-api
       dockerfile: ../docker/Dockerfile-event
     container_name: event-api
-    ports:
-      - "3011:3011"
+    # ports 제거 (외부 노출 차단)
     environment:
       SERVER_PORT: 3011
       MONGO_DB_URI: mongodb://event_user:event_user_password@mongo-event:27017/event?authSource=event
+    networks:
+      - internal
+      - gateway-link
 
   gateway-api:
     build:
@@ -64,7 +74,7 @@ services:
       dockerfile: ../docker/Dockerfile-gateway
     container_name: gateway-api
     ports:
-      - "3012:3012"
+      - "3012:3012" # gateway만 외부 노출
     depends_on:
       - auth-api
       - event-api
@@ -73,7 +83,16 @@ services:
       JWT_SECRET: DMLALRKDJQTDLWKRTJDGKSMSKEY
       AUTH_SERVER_API_URL: http://auth-api:3010
       EVENT_SERVER_API_URL: http://event-api:3011
+    networks:
+      - public
+      - gateway-link
 
 volumes:
   mongo-auth-data:
   mongo-event-data:
+
+networks:
+  public:
+  internal:
+    internal: true
+  gateway-link:
